@@ -2,7 +2,7 @@ import express from 'express';
 import { Express } from "express-serve-static-core";
 
 const api: Express = express();
-const port: string = process.env.JAIL_API_PORT || '3000';
+const port: string = process.env.PORT || '3000';
 
 api.get('/', ( req, res ) => {
     res.send('hello');
