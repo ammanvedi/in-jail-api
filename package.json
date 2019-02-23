@@ -1,0 +1,16 @@
+{
+  "name": "injail-api",
+  "version": "1.0.0",
+  "description": "an api to keep track of which rappers are in jail at the moment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rapper",
+    "jail",
+    "in"
+  ],
+  "author": "amman.vedi@gmail.com",
+  "license": "MIT"
+}
