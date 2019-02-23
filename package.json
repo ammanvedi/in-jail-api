@@ -4,7 +4,10 @@
   "description": "an api to keep track of which rappers are in jail at the moment",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "npm install",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "keywords": [
     "rapper",
@@ -12,5 +15,14 @@
     "in"
   ],
   "author": "amman.vedi@gmail.com",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": "10.x"
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.1"
+  }
 }
