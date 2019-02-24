@@ -2,7 +2,21 @@ import {APIError, Artist, CreateArtistBody} from "./types";
 import uuid from 'uuid/v4';
 import {Collection} from "mongodb";
 import {Schema, Validator} from "jsonschema";
-import {Response} from "express-serve-static-core";
+import {Response, Request} from "express-serve-static-core";
+
+export const isAllowed = ( key: string, request: Request, response: Response ): boolean => {
+
+    if( request.query.api_key === key ) {
+        return true;
+    }
+
+    response.status(401);
+    response.json({
+        description: 'you are not authorised to access this endpoint'
+    });
+    response.end();
+    return false;
+};
 
 export const sendErrorResponse = (code: number, description: string, response: Response) => {
     log( description, 'Error' );

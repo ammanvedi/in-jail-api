@@ -8,12 +8,13 @@ import bodyParser from 'body-parser';
 import {
     artistExists,
     buildArtistData,
-    getArtistById,
+    getArtistById, isAllowed,
     log,
     sendErrorResponse,
     validateSchemaAndRespond
 } from "./helpers";
 
+const API_KEY: string = process.env.JAIL_API_KEY || 'admin';
 const PORT: string = process.env.PORT || '3000';
 const MONGO_URL: string = process.env.MONGODB_URI || '';
 const MONGO_DB_NAME: string = process.env.MONGODB_DB_NAME || 'api';
@@ -77,6 +78,11 @@ const run = async () => {
     } );
 
     api.post('/artists', async (req, res) => {
+
+        if (!isAllowed(API_KEY, req, res)) {
+            return;
+        }
+
         const isValid = validateSchemaAndRespond(req.body, SCHEMAS.CreateArtistBody, res, validator);
         if ( !isValid ) {
             log('Request in wrong format', 'Error');
@@ -120,6 +126,11 @@ const run = async () => {
     } );
 
     api.post('/artists/:id/status', (req, res) => {
+
+        if (!isAllowed(API_KEY, req, res)) {
+            return;
+        }
+
         const isValid = validateSchemaAndRespond(req.body, SCHEMAS.UpdateArtistIncarceration, res, validator);
         if ( isValid ) {
             const now = new Date();
