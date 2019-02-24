@@ -39,8 +39,9 @@ const run = async () => {
                 res.json(array);
                 res.end();
             } )
-            .catch( () => {
+            .catch( err => {
                 res.status(500);
+                log(`there was a problem making the query ${err}`, 'Error');
                 res.end();
             } );
     } );
