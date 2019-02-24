@@ -1,0 +1,132 @@
+{
+	"info": {
+		"_postman_id": "fd818216-7ad9-423a-bc21-42a2780ce6a6",
+		"name": "In Jail API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all artists",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{api_url}}/artists",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"artists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Artist",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"alias\": \"6ix9ine\",\n\t\"firstName\": \"Daniel\",\n\t\"lastName\": \"Hernandez\",\n\t\"bioLinks\": [\n\t\t{\n\t\t\t\"siteSourceName\": \"Wikipedia\",\n\t\t\t\"link\": \"https://en.wikipedia.org/wiki/6ix9ine\"\n\t\t}\n\t]\n}"
+				},
+				"url": {
+					"raw": "{{api_url}}/artists",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"artists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Artist",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{api_url}}/artists/{{artist_id}}",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"artists",
+						"{{artist_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Status",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"status\": {\n\t\t\"free\": false,\n\t\t\"type\": \"PRE_TRIAL\"\n\t},\n\t\"evidenceLinks\": [\n\t\t{\n\t\t\t\"siteSourceName\": \"Wikipedia\",\n\t\t\t\"link\": \"https://en.wikipedia.org/wiki/Trial_of_6ix9ine#Timeline_of_trial\"\n\t\t}\n\t]\n}"
+				},
+				"url": {
+					"raw": "{{api_url}}/artists/{{artist_id}}/status",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"artists",
+						"{{artist_id}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Incarcerated",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{api_url}}/artists/incarcerated",
+					"host": [
+						"{{api_url}}"
+					],
+					"path": [
+						"artists",
+						"incarcerated"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

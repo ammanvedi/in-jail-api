@@ -16,7 +16,7 @@ export interface Timestamp {
     human: string
 }
 
-export type FreedomStatus = 'FREE' | 'PAROLE' | 'JAIL' | 'PRISON' | 'BAIL' | 'ON_TRIAL' | 'NO_DATA_ADDED';
+export type FreedomStatus = 'FREE' | 'PAROLE' | 'JAIL' | 'PRISON' | 'BAIL' | 'ON_TRIAL' | 'NO_DATA_ADDED' | 'PRE_TRIAL';
 
 export interface IncarcerationType {
     free?: false,
@@ -44,10 +44,8 @@ export interface UpdateArtistIncarceration {
     evidenceLinks: Array<SiteSource>
 }
 
-export interface IncarcerationStatus {
-    status: IncarcerationType,
-    added: Timestamp,
-    evidenceLinks: Array<SiteSource>
+export interface IncarcerationStatus extends UpdateArtistIncarceration {
+    added?: Timestamp,
 }
 
 /* DATABASE TYPES */
@@ -55,6 +53,6 @@ export interface IncarcerationStatus {
 /* format in which data is stored in the mongo store */
 export interface Artist extends CreateArtistBody {
     id: string,
-    currentStatus: IncarcerationType,
+    currentStatus: IncarcerationStatus,
     incarcerationHistory: Array<IncarcerationStatus>,
 }

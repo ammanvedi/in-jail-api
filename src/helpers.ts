@@ -4,14 +4,30 @@ import {Collection} from "mongodb";
 import {Schema, Validator} from "jsonschema";
 import {Response} from "express-serve-static-core";
 
+export const sendErrorResponse = (code: number, description: string, response: Response) => {
+    log( description, 'Error' );
+    response.status(code);
+    response.json({
+        description
+    });
+    response.end();
+}
+
 export const buildArtistData = ( requestData: CreateArtistBody ): Artist => ({
     ...requestData,
     id: uuid(),
     currentStatus: {
-        type: 'NO_DATA_ADDED'
+        status: {
+            type: "NO_DATA_ADDED"
+        },
+        evidenceLinks: [],
     },
     incarcerationHistory: []
 });
+
+export const getArtistById = (id: string, collection: Collection): Promise<Artist|null> => {
+    return collection.findOne<Artist>( { id } );
+};
 
 export const artistExists = ( alias: string, collection: Collection ): Promise<string | boolean> => {
     return collection.findOne<Artist>( { alias } )

@@ -5,7 +5,14 @@ import { connect } from "./db-connector";
 import {Schema, Validator} from "jsonschema";
 import {APIError, Artist, SchemaMap} from "./types";
 import bodyParser from 'body-parser';
-import {artistExists, buildArtistData, log, validateSchemaAndRespond} from "./helpers";
+import {
+    artistExists,
+    buildArtistData,
+    getArtistById,
+    log,
+    sendErrorResponse,
+    validateSchemaAndRespond
+} from "./helpers";
 
 const PORT: string = process.env.PORT || '3000';
 const MONGO_URL: string = process.env.MONGODB_URI || '';
@@ -46,6 +53,29 @@ const run = async () => {
             } );
     } );
 
+    api.get('/artists/incarcerated', (req, res) => {
+        const cursor: Cursor = collection.find({
+            'currentStatus.status.free': false
+        }, {
+            projection: {
+                _id: 0,
+                incarcerationHistory: 0
+            }
+        });
+        res.status(200);
+        cursor.toArray()
+            .then( ( array: Array<Artist> ) => {
+                res.status(200);
+                res.json(array);
+                res.end();
+            } )
+            .catch( err => {
+                res.status(500);
+                log(`there was a problem making the query ${err}`, 'Error');
+                res.end();
+            } );
+    } );
+
     api.post('/artists', async (req, res) => {
         const isValid = validateSchemaAndRespond(req.body, SCHEMAS.CreateArtistBody, res, validator);
         if ( !isValid ) {
@@ -56,13 +86,11 @@ const run = async () => {
         const existsAlready = await artistExists(req.body.alias, collection);
 
         if ( existsAlready ) {
-            log('Object existed already' );
-            res.status(409);
-            const error: APIError = {
-                description: `an artist with the name ${req.body.alias} already exists with id ${existsAlready}`
-            };
-            res.json(error);
-            res.end();
+            sendErrorResponse(
+                409,
+                `an artist with the name ${req.body.alias} already exists with id ${existsAlready}`,
+                res
+            );
             return;
         }
 
@@ -70,16 +98,57 @@ const run = async () => {
         const artist: Artist = buildArtistData( req.body );
         await collection.insertOne( artist );
         res.status(200);
+        res.json({ id: artist.id });
         res.end();
     } );
 
     api.get('/artists/:id', ( req, res ) => {
+        getArtistById(req.params.id, collection)
+            .then( ( artist: Artist | null ) => {
+                if ( artist ) {
+                    res.status(200);
+                    res.json( artist );
+                    res.end();
+                    return;
+                }
 
+                sendErrorResponse(404, 'no artist found with id', res);
+            } )
+            .catch(err => {
+                sendErrorResponse(500, `something went wrong ${err}`, res);
+            })
     } );
 
     api.post('/artists/:id/status', (req, res) => {
         const isValid = validateSchemaAndRespond(req.body, SCHEMAS.UpdateArtistIncarceration, res, validator);
         if ( isValid ) {
+            const now = new Date();
+            collection.updateOne( { id: req.params.id }, {
+                $set: {
+                    currentStatus: req.body
+                },
+                $push: {
+                    incarcerationHistory: {
+                        $each: [{
+                            ...req.body,
+                            added: {
+                                timestamp: now.getTime(),
+                                human: now.toISOString(),
+                            }
+                        }],
+                        $sort: {
+                            'added.timestamp': -1
+                        }
+                    }
+                }
+            } )
+            .then(() => {
+                res.status(200);
+                res.end();
+            })
+            .catch( err => {
+                sendErrorResponse(500, `there was a problem adding the data ${err}`, res );
+            } )
         }
     } );
 
